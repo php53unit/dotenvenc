@@ -16,7 +16,8 @@ const BUFFER_PADDING = Buffer.alloc(MAX_KEY_LENGTH); // key used in createCipher
 export type decryptParams = {
     passwd?: string, // default is process.env.DOTENVENC_PASS
     encryptedFile?: string, // default is ./.env.enc
-    print?: boolean
+    print?: boolean,
+    nodecode?: boolean
 };
 
 export type encryptParams = {
@@ -32,7 +33,7 @@ export type encryptParams = {
  * @param     {Boolean}   [print]           whether to print result on console
  * @returns   {Object}                      the config object as it's parsed by dotenv
  */
-export async function decrypt(params?: decryptParams): Promise<{ [key: string]: string }> {
+export async function decrypt(params?: decryptParams): Promise<{ [key: string]: string } | string> {
     let passwd = params && params.passwd;
     // if passed params.print=true we don't want to print anything else besides the `export VAR=VAL` lines
     let logOutput = '';
@@ -54,12 +55,20 @@ export async function decrypt(params?: decryptParams): Promise<{ [key: string]: 
     const encrBuff = Buffer.from(encText, 'hex');
     const decipher = crypto.createDecipheriv(ALGOR, Buffer.concat([Buffer.from(passwd), BUFFER_PADDING], MAX_KEY_LENGTH), ivBuff);
     const decrBuff = Buffer.concat([decipher.update(encrBuff), decipher.final()]);
+
+    if (params && params.nodecode) {
+        if (params && params.print) {
+            console.log(decrBuff.toString());
+        }
+        return decrBuff.toString();
+    }
     const parsedEnv = dotenv.parse(decrBuff);
     Object.assign(process.env, parsedEnv);
     // Wrong passwd => empty list of env vars
     if (JSON.stringify(parsedEnv) === '{}') {
         throw new Error('Restored no env variables. Either empty input file or wrong password.');
     }
+
     if (params && params.print) {
         for (const prop in parsedEnv) {
             if (parsedEnv.hasOwnProperty(prop)) {

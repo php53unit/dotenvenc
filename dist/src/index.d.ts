@@ -5,6 +5,7 @@ export type decryptParams = {
     passwd?: string;
     encryptedFile?: string;
     print?: boolean;
+    nodecode?: boolean;
 };
 export type encryptParams = {
     passwd: string;
@@ -20,7 +21,7 @@ export type encryptParams = {
  */
 export declare function decrypt(params?: decryptParams): Promise<{
     [key: string]: string;
-}>;
+} | string>;
 /**
  * Read encrypted env file and print on console "export" statements for the env vars
  * @param     {String}    passwd            the password for decrypting the encrypted .env.enc (memory only;no disk)

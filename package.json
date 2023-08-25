@@ -1,5 +1,5 @@
 {
-  "name": "@tka85/dotenvenc",
+  "name": "@radio/dotenvenc",
   "version": "5.1.1",
   "description": "Encrypt and decrypt in-memory at runtime your .env file so you can store sensitive information (passwords etc.) in source control",
   "main": "dist/src/index.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:tka85/dotenvenc.git"
+    "url": "git@github.com:php53unit/dotenvenc.git"
   },
   "bin": {
     "dotenvenc": "./bin/dotenvenc"

@@ -46,6 +46,12 @@ async function decrypt(params) {
     const encrBuff = Buffer.from(encText, 'hex');
     const decipher = crypto_1.default.createDecipheriv(ALGOR, Buffer.concat([Buffer.from(passwd), BUFFER_PADDING], MAX_KEY_LENGTH), ivBuff);
     const decrBuff = Buffer.concat([decipher.update(encrBuff), decipher.final()]);
+    if (params && params.nodecode) {
+        if (params && params.print) {
+            console.log(decrBuff.toString());
+        }
+        return decrBuff.toString();
+    }
     const parsedEnv = dotenv_1.default.parse(decrBuff);
     Object.assign(process.env, parsedEnv);
     // Wrong passwd => empty list of env vars
